@@ -1,0 +1,11 @@
+set m1 = ##class(Restaurant.Meal).create("Каппа ролл", "Ролл с огурцом", 112.0, 0.9)
+set m2 = ##class(Restaurant.Meal).create("Абокадо ролл", "Ролл с авокадо", 120.0, 0.6)
+set m2 = ##class(Restaurant.Meal).create("Угрито ролл", "Ролл с угрем", 250.0, 0.8)
+write ##class(Restaurant.Meal).getNameSelectList()
+
+set c1 = ##class(Restaurant.Client).create("anna", "111", "Anna Seleznyova", 89009998866, "anna@mail.ru", 21/03/1996)
+set c2 = ##class(Restaurant.Client).create("petr", "222", "Petr Ivanov", 89009998854, "petya@mail.ru", 09/05/1996)
+write ##class(Restaurant.Client).getAll()
+write ##class(Restaurant.Client).login("anna", "111")
+
+write ##class(Restaurant.Client).createClientsOrder(1, [1, 2, 1, 2], 999)
