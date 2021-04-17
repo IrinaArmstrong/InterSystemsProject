@@ -2,7 +2,10 @@
 Class Restaurant.Client Extends %Persistent
 {
 
-Relationship Order As Restaurant.Order [ Cardinality = many, Inverse = Client ];
+/// Clients order
+Property Order As Restaurant.Order;
+// Relationship Order As Restaurant.Order [ Cardinality = many, Inverse = Client ];
+
 
 Property Login As %String [ Required ];
 
@@ -63,7 +66,9 @@ ClassMethod createClientsOrder(ClientID As %Integer, MealsToAdd As %Collection.A
     set result = {}
 
     if $IsObject(client) {
-        set client.Order = ##class(Restaurant.Order).%create(ClientID)
+        // set client.Order = ##class(Restaurant.Order).%create(ClientID)
+        set client.Order = ##class(Restaurant.Order).%New()
+
         set addStatus = client.Order.addMealsToOrder(MealsToAdd, TotalCost)   
         set saveResult = client.%Save()
     
@@ -76,6 +81,12 @@ ClassMethod createClientsOrder(ClientID As %Integer, MealsToAdd As %Collection.A
         set result.message = "Invalid Order Object Selected"
     }
     return result.%ToJSON()
+}
+
+ClassMethod GetClient(ID As %Integer) As Restaurant.Client
+{
+    set obj = ##class(Restaurant.Client).%OpenId(ID)
+    Return obj
 }
 
 /// Save a request object to table

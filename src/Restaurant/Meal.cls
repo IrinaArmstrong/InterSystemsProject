@@ -89,6 +89,20 @@ ClassMethod getAll() As %DynamicArray
     return meals.%ToJSON()
 }
 
+ClassMethod PrintAllMeals() As %Status
+{
+    set data = ##class(%SQL.Statement).%ExecDirect(, "SELECT * FROM Restaurant.Meal")
+    while data.%Next() {
+        write $$$NL
+        write data.Name
+        write $$$NL
+        write data.Description
+        write $$$NL
+        write data.Price
+        write $$$NL
+    }
+}
+
 ClassMethod GetMeal(ID As %Integer) As Restaurant.Meal
 {
     set obj = ##class(Restaurant.Meal).%OpenId(ID)

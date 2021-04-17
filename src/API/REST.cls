@@ -2,23 +2,163 @@
 Class Restaurant.Api.Rest Extends %CSP.REST
 {
 
+/// By default convert the input stream to Unicode
+Parameter CONVERTINPUTSTREAM = 1;
+
 Parameter HandleCorsRequest = 1;
 
+/// Default the Content-Type for this application.
 Parameter CONTENTTYPE = "application/json";
+
+/// The default response charset is utf-8
+Parameter CHARSET = "utf-8";
 
 XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
-
+  <Route Url="/test" Method="get" Call="TestPage" />
 </Routes>
 }
 
-ClassMethod Test() As %Status
+ClassMethod TestPage() As %Status
 {
   Set currentDate = $ZDate($Now(), 3)
   Set obj = {"msg":"It works", "today": (currentDate)}
   Write obj.%ToJSON()
   Return $$$OK
+}
+
+
+ClassMethod Test() As %Status
+{
+  write "hello this is test"
+  return $$$OK
+}
+
+ /// Clients methods
+ClassMethod ClientsGetAll() As %Status
+{
+  Try {
+    write ##class(Restaurant.Client).getAll()
+    return $$$OK
+  } Catch {
+    set result = {"result": false}
+    set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
+    write result.%ToJSON()
+    Return $$$ERROR(500)
+  }
+}
+
+ClassMethod ClientRegister() As %Status
+{
+  set result = ##class(Restaurant.Client).create(%request)
+  write result
+  return $$$OK
+}
+
+ClassMethod ClientLogin() As %Status
+{
+  set result = ##class(Restaurant.Client).login(%request)
+  write result
+  return $$$OK
+}
+
+ClassMethod ClientsCreateOrder() As %Status
+{
+  Try {
+    set id = %request.Get("id")
+    set meals = %request.Get("meals")
+    set cost = %request.Get("cost")
+    write ##class(Restaurant.Client).createClientsOrder(id, meals, cost)
+    return $$$OK
+  } Catch {
+    set result = {"result": false}
+    set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
+    write result.%ToJSON()
+    Return $$$ERROR(500)
+  }
+}
+
+ClassMethod ClientAdd() As %Status
+{
+  set result = ##class(Restaurant.Client).add(%request)
+  write result
+  return $$$OK
+}
+
+ClassMethod ClientGet() As %Status
+{
+  set result = ##class(Restaurant.Client).get(%request)
+  write result
+  return $$$OK
+}
+
+ClassMethod ClientDelete() As %Status
+{
+  set id = %request.Get("id")
+  set deleteResult = ##class(Restaurant.Client).delete(id)
+  write deleteResult
+  return $$$OK
+}
+
+ /// Orders methods
+
+ ClassMethod OrderGetStatus() As %Status
+{
+  set id = %request.Get("id")
+  set result = ##class(Restaurant.Order).GetOrderStatus(id)
+  write result.Status
+  return $$$OK
+}
+
+ClassMethod OrderAdd() As %Status
+{
+  set result = ##class(Restaurant.Order).add(%request)
+  write result
+  return $$$OK
+}
+
+ClassMethod OrderGet() As %Status
+{
+  set id = %request.Get("id")
+  set result = ##class(Restaurant.Order).get(id)
+  write result
+  return $$$OK
+}
+
+ClassMethod OrderDelete() As %Status
+{
+  set id = %request.Get("id")
+  set deleteResult = ##class(Restaurant.Order).delete(id)
+  write deleteResult
+  return $$$OK
+}
+
+ClassMethod OrdersGetAll() As %Status
+{
+  Try {
+    write ##class(Restaurant.Order).getAll()
+    return $$$OK
+  } Catch {
+    set result = {"result": false}
+    set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
+    write result.%ToJSON()
+    Return $$$ERROR(500)
+  }
+}
+
+/// Meals methods
+ClassMethod MealsGetAll() As %Status
+{
+  Try {
+    write ##class(Restaurant.Meal).getAll()
+    return $$$OK
+  } Catch {
+    set result = {"result": false}
+    set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
+    write result.%ToJSON()
+    Return $$$ERROR(500)
+  }
 }
 
 }

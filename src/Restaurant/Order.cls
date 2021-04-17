@@ -4,23 +4,19 @@ Class Restaurant.Order Extends %Persistent
 
 Property State As %String(MAXLEN = 15);
 
-Relationship Client As Restaurant.Client [ Cardinality = one, Inverse = Order ];
+Property ClientID As %Integer;
+// Relationship Client As Restaurant.Client [ Cardinality = one, Inverse = Order ];
 
 // Meals IDs, can repeat if there are multiple samples of single item
+Property Meals As list Of %Integer;
 
-Property Meals As array Of %Integer;
-
-// Property Meals As array Of Restaurant.Meal;
-
-// %Collection.ArrayOfDT
-
-/// Total cost of oreder instance
+// Total cost of oreder instance
 Property Cost As %Float;
 
-ClassMethod create(ClientId As %String = "") As Restaurant.Order
+ClassMethod create(AddClientId As %Integer) As Restaurant.Order
 {
     set order = ..%New()
-    do order.ClientSetObjectID(ClientId)
+    set order.ClientID = AddClientId
     set order.State = "Created"
     set order.Cost = 0.0
     set order.Meals = []
@@ -28,11 +24,14 @@ ClassMethod create(ClientId As %String = "") As Restaurant.Order
     return order
 }
 
-/// Edit order's profile
-Method addMealsToOrder(MealsToAdd As %Collection.ArrayOfObj, Cost As %Float) As %DynamicArray
+// Edit order's profile
+Method addMealsToOrder(MealsToAdd As %Collection.ListOfDT, Cost As %Float) As %DynamicArray
 {
     set result = {}
-    set ..Meals = MealsToAdd
+    For i=1:1:MealsToAdd.%Size() {
+        set addResult = ..Meals.Insert(MealsToAdd.%Get(i))
+        write addResult
+    }
     set ..Cost = Cost
     set saveResult = ..%Save()
     
@@ -51,7 +50,7 @@ ClassMethod add(reqObj) As %DynamicArray
 {
   set result = {}
   set obj = ..%New()
-  set obj.Client = reqObj.Get("client")
+  set obj.ClientID = reqObj.Get("clientid")
   set obj.Status = reqObj.Get("status")
   set obj.Meals = reqObj.Get("meals")
   set saveResult = obj.%Save()
@@ -73,7 +72,7 @@ ClassMethod getAll() As %DynamicArray
         set obj = {
             "id": (data.ID),
             "status": (data.Status),
-            "client": (data.Client.ClientID),
+            "clientid": (data.ClientID),
             "meals": (data.Meals)
         }
 
@@ -82,41 +81,6 @@ ClassMethod getAll() As %DynamicArray
     return orders.%ToJSON()
 }
 
-// ClassMethod addMealsToOrder(OrderID As %Integer, MealsToAdd As %Collection.ArrayOfObj) As %DynamicArray
-
-// {
-
-//     set Id = OrderID
-
-//     set order = ..%OpenId(Id)
-
-//     set result = {}
-
-//     if $IsObject(order) {
-
-//         set order.Meals = MealsToAdd
-
-//         set saveResult = order.%Save()
-
-//         if $$$ISOK(saveResult) set result = {"result": true}
-
-//         else  set result = {"result": false}
-
-//         set ErrorMessage = ##class(%SYSTEM.Status).GetErrorText(saveResult)
-
-//         set result.message = ErrorMessage
-
-//     } else {
-
-//         set result = {"result": false}
-
-//         set result.message = "Invalid Order Object Selected"
-
-//     }
-
-//     return result.%ToJSON()
-
-// }
 
 /// Edit order's profile
 ClassMethod changeCostOfOrder(OrderID As %Integer, CostToAdd As %Float) As %DynamicArray
@@ -159,6 +123,19 @@ ClassMethod changeStatusOfOrder(OrderID As %Integer, NewStatus As %String) As %D
         set result.message = "Invalid Order Object Selected"
     }
     return result.%ToJSON()
+}
+
+
+ClassMethod GetOrder(ID As %Integer) As Restaurant.Order
+{
+    set obj = ##class(Restaurant.Order).%OpenId(ID)
+    Return obj
+}
+
+ClassMethod GetOrderStatus(ID As %Integer) As %String
+{
+    set obj = ##class(Restaurant.Order).%OpenId(ID)
+    Return obj.Status
 }
 
 Storage Default
