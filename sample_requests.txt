@@ -5,9 +5,13 @@ write ##class(Restaurant.Meal).getNameSelectList()
 
 set c1 = ##class(Restaurant.Client).create("anna", "111", "Anna Seleznyova", 89009998866, "anna@mail.ru", 21/03/1996)
 set c2 = ##class(Restaurant.Client).create("petr", "222", "Petr Ivanov", 89009998854, "petya@mail.ru", 09/05/1996)
+set c3 = ##class(Restaurant.Client).create("maria", "qwerty", "Maria Novikova", 89009788866, "mria@mail.ru", 12/01/1996)
 write ##class(Restaurant.Client).getAll()
 write ##class(Restaurant.Client).login("anna", "111")  // -> {"assepted":true,"client":"1"}
 write ##class(Restaurant.Client).login("anna", "222")  // -> {"assepted":false}
+write ##class(Restaurant.Client).login("maria", "qwerty") 
+
+http://localhost:9098/bmstuapi/client/login?login=anna&password=111
 
 
 set MealsToAdd = [1, 2, 1, 2]

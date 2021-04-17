@@ -17,6 +17,24 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
 {
 <Routes>
   <Route Url="/test" Method="get" Call="TestPage" />
+
+  <Route Url="/client/register" Method="post" Call="ClientRegister" />
+  <Route Url="/client/login" Method="get" Call="ClientLogin" />
+  <Route Url="/client/add" Method="get" Call="ClientAdd" />
+  <Route Url="/client/delete" Method="delete" Call="ClientDelete" />
+  <Route Url="/client/createOrder" Method="post" Call="ClientsCreateOrder" />
+  <Route Url="/client/getAll" Method="get" Call="ClientsGetAll" />
+
+  <Route Url="/order/getAll" Method="get" Call="getAll" />
+  <Route Url="/order/getStatus" Method="get" Call="OrderGetStatus" />
+  <Route Url="/order/add" Method="get" Call="OrderAdd" />
+  <Route Url="/order/get" Method="get" Call="OrderGet" />
+  <Route Url="/order/delete" Method="get" Call="OrderDelete" />
+  <Route Url="/order/getAll" Method="get" Call="OrdersGetAll" />
+
+  <Route Url="/meal/getAll" Method="get" Call="MealsGetAll" />
+
+
 </Routes>
 }
 
@@ -28,14 +46,13 @@ ClassMethod TestPage() As %Status
   Return $$$OK
 }
 
-
 ClassMethod Test() As %Status
 {
   write "hello this is test"
   return $$$OK
 }
 
- /// Clients methods
+/// Clients methods
 ClassMethod ClientsGetAll() As %Status
 {
   Try {
@@ -58,7 +75,11 @@ ClassMethod ClientRegister() As %Status
 
 ClassMethod ClientLogin() As %Status
 {
-  set result = ##class(Restaurant.Client).login(%request)
+  set login = %request.Get("login")
+  write !, login
+  set password = %request.Get("password")
+  write !, password, !
+  set result = ##class(Restaurant.Client).login(%request.Get("login"), %request.Get("password"))
   write result
   return $$$OK
 }
@@ -101,9 +122,8 @@ ClassMethod ClientDelete() As %Status
   return $$$OK
 }
 
- /// Orders methods
-
- ClassMethod OrderGetStatus() As %Status
+/// Orders methods
+ClassMethod OrderGetStatus() As %Status
 {
   set id = %request.Get("id")
   set result = ##class(Restaurant.Order).GetOrderStatus(id)
