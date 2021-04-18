@@ -68,7 +68,13 @@ ClassMethod ClientsGetAll() As %Status
 
 ClassMethod ClientRegister() As %Status
 {
-  set result = ##class(Restaurant.Client).create(%request)
+  set login = %request.Get("login")
+  set password = %request.Get("password")
+  set name = %request.Get("name")
+  set phone = %request.Get("phone")
+  set email = %request.Get("email")
+  set dob = %request.Get("dob")
+  set result = ##class(Restaurant.Client).create(login, password, name, phone, email, dob)
   write result
   return $$$OK
 }
@@ -76,9 +82,7 @@ ClassMethod ClientRegister() As %Status
 ClassMethod ClientLogin() As %Status
 {
   set login = %request.Get("login")
-  write !, login
   set password = %request.Get("password")
-  write !, password, !
   set result = ##class(Restaurant.Client).login(%request.Get("login"), %request.Get("password"))
   write result
   return $$$OK
@@ -109,7 +113,8 @@ ClassMethod ClientAdd() As %Status
 
 ClassMethod ClientGet() As %Status
 {
-  set result = ##class(Restaurant.Client).get(%request)
+  set id = %request.Get("id")
+  set result = ##class(Restaurant.Client).get(id)
   write result
   return $$$OK
 }

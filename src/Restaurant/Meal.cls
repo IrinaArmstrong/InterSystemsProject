@@ -42,7 +42,7 @@ ClassMethod add(reqObj) As %DynamicArray
 }
 
 /// Delete meal from table by id
-/// <var>Id</var> - driver id in the table
+/// <var>Id</var> - meal id in the table
 ClassMethod delete(Id As %String = "") As %DynamicArray
 {
     set deleteResult = ..%DeleteId(Id)

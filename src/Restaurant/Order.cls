@@ -63,6 +63,19 @@ ClassMethod add(reqObj) As %DynamicArray
   return result.%ToJSON()
 }
 
+/// Delete order from table by id
+/// <var>Id</var> - order id in the table
+ClassMethod delete(Id As %String = "") As %DynamicArray
+{
+    set deleteResult = ..%DeleteId(Id)
+    set result = {}
+    if $$$ISOK(deleteResult) set result = {"result": true}
+    else  set result = {"result": false}
+    set ErrorMessage = ##class(%SYSTEM.Status).GetErrorText(deleteResult)
+    set result.message = ErrorMessage
+    return result.%ToJSON()
+}
+
 /// Get all places from the table
 ClassMethod getAll() As %DynamicArray
 {
