@@ -13,15 +13,15 @@ Property Meals As list Of %Integer;
 // Total cost of oreder instance
 Property Cost As %Float;
 
-ClassMethod create(AddClientId As %Integer) As Restaurant.Order
+ClassMethod create(AddClientId As %Integer, Meals As %Collection.ListOfDT, Cost as %Float) As %Integer
 {
     set order = ..%New()
     set order.ClientID = AddClientId
     set order.State = "Created"
-    set order.Cost = 0.0
-    set order.Meals = []
+    set order.Cost = Cost
+    set order.Meals = Meals
     set st =  order.%Save()
-    return order
+    return order.%Id
 }
 
 // Edit order's profile

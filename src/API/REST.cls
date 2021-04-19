@@ -25,9 +25,10 @@ XData UrlMap [ XMLNamespace = "http://www.intersystems.com/urlmap" ]
   <Route Url="/client/createOrder" Method="post" Call="ClientsCreateOrder" />
   <Route Url="/client/getAll" Method="get" Call="ClientsGetAll" />
 
+  <Route Url="/order/create" Method="post" Call="getAll" />
   <Route Url="/order/getAll" Method="get" Call="getAll" />
   <Route Url="/order/getStatus" Method="get" Call="OrderGetStatus" />
-  <Route Url="/order/add" Method="get" Call="OrderAdd" />
+  <Route Url="/order/add" Method="post" Call="OrderAdd" />
   <Route Url="/order/get" Method="get" Call="OrderGet" />
   <Route Url="/order/delete" Method="get" Call="OrderDelete" />
   <Route Url="/order/getAll" Method="get" Call="OrdersGetAll" />
@@ -128,6 +129,17 @@ ClassMethod ClientDelete() As %Status
 }
 
 /// Orders methods
+/// 
+ ClassMethod OrderCreate() As %Status
+{
+  set clientid = %request.Get("clientid")
+  set meals = %request.Get("meals")
+  set cost = %request.Get("cost")
+  set result = ##class(Restaurant.Order).create(clientid, meals, cost)
+  write result
+  return $$$OK
+}
+
 ClassMethod OrderGetStatus() As %Status
 {
   set id = %request.Get("id")
