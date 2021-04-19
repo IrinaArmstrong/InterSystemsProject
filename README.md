@@ -38,10 +38,12 @@ Open IRIS terminal:
 ```
 $ docker-compose exec iris iris session iris
 USER>zn "IRISAPP"
-IRISAPP>write ##class(Simple.Demo).Hello()
+IRISAPP>...
 ```
+To update REST API class: http://localhost:9098/csp/sys/sec/%25CSP.UI.Portal.Applications.WebList.zen
 
 Open http://localhost:9098/bmstuapi/test to test REST API
+```
 
 ## How to start coding
 This repository is ready to code in VSCode with ObjectScript plugin.

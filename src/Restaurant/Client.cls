@@ -36,7 +36,7 @@ ClassMethod create(Login As %String, Password As %String, Name As %String, Phone
     // set client.Order = ##class(Restaurant.Order).%create(client.ID)
 
     set st =  ..DOBIsValid(client.%Save())
-    return client
+    return client.%Id() 
 }
 
 /// Login user
@@ -59,27 +59,26 @@ ClassMethod login(Login As %String, Password As %String) As %Status
 }
 
 /// Edit order's profile
-ClassMethod createClientsOrder(ClientID As %Integer, MealsToAdd As %Collection.ArrayOfObj, TotalCost As %Float) As %DynamicArray
+ClassMethod createClientsOrder(ClientID As %String, MealsToAdd As %Collection.ArrayOfObj, TotalCost As %Float) As %DynamicArray
 {
-    set Id = ClientID
-    set client = ..%OpenId(Id)
+    set client = ..%OpenId(ClientID)
     set result = {}
 
-    if $IsObject(client) {
+    #; if $IsObject(client) {} else {
+    #;     set result = {"result": false}
+    #;     set result.message = "Invalid Order Object Selected"
+    #; }
         // set client.Order = ##class(Restaurant.Order).%create(ClientID)
-        set client.Order = ##class(Restaurant.Order).%New()
+    set client.Order = ##class(Restaurant.Order).%New()
 
-        set addStatus = client.Order.addMealsToOrder(MealsToAdd, TotalCost)   
-        set saveResult = client.%Save()
+    set addStatus = client.Order.addMealsToOrder(MealsToAdd, TotalCost)   
+    set saveResult = client.%Save()
     
-        if $$$ISOK(saveResult) set result = {"result": true}
-        else  set result = {"result": false}
-        set ErrorMessage = ##class(%SYSTEM.Status).GetErrorText(saveResult)
-        set result.message = ErrorMessage
-    } else {
-        set result = {"result": false}
-        set result.message = "Invalid Order Object Selected"
-    }
+    if $$$ISOK(saveResult) set result = {"result": true}
+    else  set result = {"result": false}
+    set ErrorMessage = ##class(%SYSTEM.Status).GetErrorText(saveResult)
+    set result.message = ErrorMessage
+    
     return result.%ToJSON()
 }
 

@@ -98,7 +98,7 @@ ClassMethod ClientsCreateOrder() As %Status
     return $$$OK
   } Catch {
     set result = {"result": false}
-    set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
+    //set result.message = $ZCVT(exception.Name_" "_exception.Location, "O", "HTML")
     write result.%ToJSON()
     Return $$$ERROR(500)
   }
